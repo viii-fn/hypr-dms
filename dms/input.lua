@@ -3,11 +3,15 @@
 hl.config({
 	input = {
 		follow_mouse = 1,
+		accel_profile = "adaptive",
 		touchpad = {
 			natural_scroll = false,
 			tap_to_click = true,
+			middle_button_emulation = true,
 		},
 		kb_layout = "gb",
 		numlock_by_default = false,
 	},
 })
+
+hl.device({ name = "synps/2-synaptics-touchpad", accel_profile = "" })

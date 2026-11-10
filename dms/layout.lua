@@ -3,19 +3,35 @@
 hl.config({
 	general = {
 		gaps_in = 4,
-		gaps_out = 4,
+		gaps_out = 10,
 		border_size = 2,
 		resize_on_border = false,
+		layout = "dwindle",
+	},
+	dwindle = {
+		preserve_split = false,
+		smart_split = true,
+		force_split = 0,
 	},
 	decoration = {
 		rounding = 16,
 		blur = {
 			passes = 2,
 		},
+		wobble = {
+			enabled = true,
+			intensity = 0.95,
+			stiffness = 200,
+		},
 	},
 })
 
 hl.layer_rule({
 	match = { namespace = "^dms:bar$" },
+	xray = true,
+})
+
+hl.layer_rule({
+	match = { namespace = "^dms:dankisland$" },
 	xray = true,
 })
