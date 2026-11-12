@@ -5,6 +5,18 @@ if status is-login
     if test (tty) = "/dev/tty1"
         exec start-hyprland
     end
+
+    if test (tty) = "/dev/tty2"
+	exec startplasma-wayland
+    end
+
+    if test (tty) = "/dev/tty3"
+	exec niri-session
+    end
+
+    if test (tty) = "/dev/tty4"
+	exec mango
+    end
 end
 
 if status is-interactive
