@@ -1,5 +1,11 @@
-local vars = require("variables")
+-- ~/.config/hypr/hyprland/functions.lua
+-- Helpers used by keybinds.lua.
+--
+-- IMPORTANT: every helper that looks at the current window/monitor returns a FUNCTION that runs when
+-- the key is pressed. (The old resize helper ran once while the config loaded, froze whichever window
+-- was focused at that moment, and that is why Super+Alt+arrows / Super+-/+ worked "once in a while".)
 
+-- Workspace groups: workspaces 1-10, 11-20, ... "focus"/"move" within a group or across groups.
 local function wsaction(action, range, i)
     return function()
         local activews = hl.get_active_workspace()
@@ -18,39 +24,35 @@ local function wsaction(action, range, i)
     end
 end
 
-local function resize_by_screen(x, y)
-    local screen = hl.get_active_monitor()
-    if screen and type(screen.width) == "number" and type(screen.height) == "number" then
-        if not (x == 0 and y == 0) then
-            local w = (x and x > 0) and math.floor(screen.width * x / 100) or screen.width
-            local h = (y and y > 0) and math.floor(screen.height * y / 100) or screen.height
-            return { x = w, y = h, relative = false }
-        end
+-- Grow/shrink the focused window by a percent of ITS OWN current size (dx = width, dy = height).
+local function resize_by_percent(dx, dy)
+    return function()
+        local win = hl.get_active_window()
+        if not (win and win.size) then return end
+        hl.dispatch(hl.dsp.window.resize({
+            x = math.floor(win.size.x * dx / 100),
+            y = math.floor(win.size.y * dy / 100),
+            relative = true,
+        }))
     end
 end
 
-local function resize_active_window(x, y)
-    local win = hl.get_active_window()
-    if win and win.size then
-        local w = (win.size.x * (x / 100)) or 800
-        local h = (win.size.y * (y / 100)) or 600
-
-        return { x = w, y = h, relative = true }
+-- Set the focused window to x% / y% of the monitor, then centre it.
+local function size_and_center(x_percent, y_percent)
+    return function()
+        local screen = hl.get_active_monitor()
+        if not (screen and type(screen.width) == "number" and type(screen.height) == "number") then return end
+        local scale = screen.scale or 1 -- logical size = pixels / scale
+        hl.dispatch(hl.dsp.window.resize({
+            x = math.floor(screen.width / scale * x_percent / 100),
+            y = math.floor(screen.height / scale * y_percent / 100),
+            relative = false,
+        }))
+        hl.dispatch(hl.dsp.window.center())
     end
 end
 
-local function resizer(window, pattern, x_percent, y_percent, actions, exact)
-    if (window and window.title) and string.find(window.title, pattern, 1, exact) then
-        local disp = (type(actions) == "table") and actions or { actions }
-        for _, x in ipairs(disp) do
-            hl.dispatch(x)
-        end
-
-        hl.dispatch(hl.dsp.window.resize(resize_by_screen(x_percent, y_percent)))
-        hl.dispatch(hl.dsp.window.set_prop({ prop = "keep_aspect_ratio", value = "true" }))
-    end
-end
-
+-- Picture-in-picture: shrink the window to ~1/4 of the screen height, pin it to the bottom-right corner.
 local function move_actions(win)
     local screen = hl.get_active_monitor()
 
@@ -78,22 +80,21 @@ local function move_actions(win)
     end
 end
 
--- special ws: открыть/закрыть, а если там пусто — запустить его программу из vars.apps (замена caelestia toggle).
--- apps читаем при нажатии, а не при загрузке: user.lua грузится после биндов и меняет их там
-local function toggle_special(name)
+-- Special workspace: show/hide it, and if it is empty, launch `cmd` into it.
+-- Show first, launch second: Hyprland opens the window where the focus was at launch time, and the
+-- other order hid the workspace as soon as the window appeared.
+local function toggle_special(name, cmd)
     return function()
-        local cmd = vars.apps[name]
+        local launch = cmd
         for _, ws in ipairs(hl.get_workspaces()) do
-            if ws.name == "special:" .. name and ws.windows > 0 then cmd = nil end
+            if ws.name == "special:" .. name and ws.windows > 0 then launch = nil end
         end
-        -- сначала показать, потом запускать: hypr открывает окно там, где был фокус в момент запуска,
-        -- и при обратном порядке прятал воркспейс, едва окно появится
         hl.dispatch(hl.dsp.workspace.toggle_special(name))
-        if cmd then hl.exec_cmd(cmd) end
+        if launch then hl.exec_cmd(launch) end
     end
 end
 
--- запись экрана gpu-screen-recorder: тот же бинд ещё раз — стоп
+-- Screen recording with gpu-screen-recorder: press the same bind again to stop.
 local function record(region, sound)
     return function()
         local mon = hl.get_active_monitor()
@@ -104,11 +105,10 @@ local function record(region, sound)
 end
 
 return {
-    toggle_special       = toggle_special,
-    record               = record,
-    resizer              = resizer,
-    resize_by_screen     = resize_by_screen,
-    resize_active_window = resize_active_window,
-    wsaction             = wsaction,
-    move_actions         = move_actions,
+    wsaction          = wsaction,
+    resize_by_percent = resize_by_percent,
+    size_and_center   = size_and_center,
+    move_actions      = move_actions,
+    toggle_special    = toggle_special,
+    record            = record,
 }

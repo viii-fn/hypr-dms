@@ -1,21 +1,20 @@
-local vars = require("variables")
-local fn   = require("hyprland.functions")
+-- ~/.config/hypr/hyprland/keybinds.lua
+-- All keybinds. The `dms ipc call ...` binds open/close the DMS (Quickshell) panels.
+local fn = require("hyprland.functions")
 
--- глобалки шелла — shell:<имя>: их регистрирует тот шелл, что сейчас живой (demonshot, glyph), чего у него нет — молчит
-
--- Misc
+-- Shell (DMS)
 hl.bind("SUPER + Return", hl.dsp.exec_cmd("dms ipc call spotlight toggle"))
 hl.bind("SUPER + I", hl.dsp.exec_cmd("dms ipc call settings toggle"))
 hl.bind("SUPER + N", hl.dsp.exec_cmd("dms ipc call notifications toggle"))
--- [viii-removed] hl.bind("SUPER + P", hl.dsp.global("shell:pact"))
--- [viii-removed] hl.bind("SUPER + A", hl.dsp.global("shell:quick")) -- быстрые настройки glyph
--- [viii-removed] hl.bind("SUPER + SHIFT + W", hl.dsp.global("shell:wall")) -- обои glyph
-hl.bind(vars.kbSession, hl.dsp.exec_cmd("dms ipc call powermenu toggle"))
-hl.bind(vars.kbPower, hl.dsp.exec_cmd("dms ipc call powermenu toggle"))
-hl.bind(vars.kbLock, hl.dsp.exec_cmd(vars.lockCmd))
-hl.bind(vars.kbRestoreLock, hl.dsp.exec_cmd(vars.lockCmd), { locked = true }) -- лок упал — поднять заново (сессия ещё заблокирована → нужен locked)
+hl.bind("SUPER + V", hl.dsp.exec_cmd("dms ipc call clipboard toggle"))
+hl.bind("CTRL + ALT + Delete", hl.dsp.exec_cmd("dms ipc call powermenu toggle"))
+hl.bind("SUPER + Escape", hl.dsp.exec_cmd("dms ipc call powermenu toggle"))
 
--- Brightness: ставит шелл (services/Backlight) — OSD двигается сразу, brightnessctl догоняет
+-- Lock
+hl.bind("SUPER + L", hl.dsp.exec_cmd("hyprlock"))
+hl.bind("SUPER + ALT + L", hl.dsp.exec_cmd("hyprlock"), { locked = true }) -- lock crashed: bring it back (session is still locked, so it needs `locked`)
+
+-- Brightness: DMS moves the OSD immediately, brightnessctl catches up
 hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd('dms ipc call brightness increment 5 ""'), { locked = true, repeating = true })
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd('dms ipc call brightness decrement 5 ""'), { locked = true, repeating = true })
 
@@ -29,23 +28,24 @@ hl.bind("CTRL + SUPER + Minus", hl.dsp.exec_cmd("playerctl previous"), { locked 
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 hl.bind("XF86AudioStop", hl.dsp.exec_cmd("playerctl stop"), { locked = true })
 
--- Kill/restart
-hl.bind("CTRL + SUPER + SHIFT + R", hl.dsp.exec_cmd(vars.rice .. " kill"), { release = true })
-hl.bind("CTRL + SUPER + ALT + R", hl.dsp.exec_cmd(vars.rice .. " restart"), { release = true })
+-- Kill/restart the shell
+hl.bind("CTRL + SUPER + SHIFT + R", hl.dsp.exec_cmd("dms kill"), { release = true })
+hl.bind("CTRL + SUPER + ALT + R", hl.dsp.exec_cmd("dms restart"), { release = true })
 
+-- Workspaces 1-10 (SUPER+1..0), groups of ten (CTRL+SUPER+1..0); ALT added = move the window there
 for i = 1, 10 do
     local key = i % 10 -- 10 maps to key 0
-    hl.bind(vars.kbGoToWs .. " + " .. key, fn.wsaction("focus", "", i))
-    hl.bind(vars.kbMoveWinToWs .. " + " .. key, fn.wsaction("move", "", i))
-    hl.bind(vars.kbGoToWsGroup .. " + " .. key, fn.wsaction("focus", "group", i))
-    hl.bind(vars.kbMoveWinToWsGroup .. " + " .. key, fn.wsaction("move", "group", i))
+    hl.bind("SUPER + " .. key, fn.wsaction("focus", "", i))
+    hl.bind("SUPER + ALT + " .. key, fn.wsaction("move", "", i))
+    hl.bind("CTRL + SUPER + " .. key, fn.wsaction("focus", "group", i))
+    hl.bind("CTRL + SUPER + ALT + " .. key, fn.wsaction("move", "group", i))
 end
 
 -- Go to workspace -1/+1
 hl.bind("SUPER + mouse_down", hl.dsp.focus({ workspace = "-1" }))
 hl.bind("SUPER + mouse_up", hl.dsp.focus({ workspace = "+1" }))
-hl.bind(vars.kbPrevWs, hl.dsp.focus({ workspace = "-1" }), { repeating = true })
-hl.bind(vars.kbNextWs, hl.dsp.focus({ workspace = "+1" }), { repeating = true })
+hl.bind("CTRL + SUPER + Left", hl.dsp.focus({ workspace = "-1" }), { repeating = true })
+hl.bind("CTRL + SUPER + Right", hl.dsp.focus({ workspace = "+1" }), { repeating = true })
 hl.bind("SUPER + Page_Up", hl.dsp.focus({ workspace = "-1" }), { repeating = true })
 hl.bind("SUPER + Page_down", hl.dsp.focus({ workspace = "+1" }), { repeating = true })
 
@@ -61,22 +61,17 @@ hl.bind("SUPER + ALT + mouse_up", hl.dsp.window.move({ workspace = "+1" }))
 hl.bind("CTRL + SUPER + SHIFT + right", hl.dsp.window.move({ workspace = "+1" }), { repeating = true })
 hl.bind("CTRL + SUPER + SHIFT + left", hl.dsp.window.move({ workspace = "-1" }), { repeating = true })
 
--- Move window to/from special workspace
-hl.bind("CTRL + SUPER + SHIFT + up", hl.dsp.window.move({ workspace = "special:special" }))
-hl.bind("CTRL + SUPER + SHIFT + down", hl.dsp.window.move({ workspace = "e+0" }))
-hl.bind("SUPER + ALT + S", hl.dsp.window.move({ workspace = "special:special" }))
-
 -- Window groups
-hl.bind(vars.kbWindowGroupCycleNext, hl.dsp.window.cycle_next(), { repeating = true })
-hl.bind(vars.kbWindowGroupCyclePrev, hl.dsp.window.cycle_next({ next = false }), { repeating = true })
+hl.bind("ALT + TAB", hl.dsp.window.cycle_next(), { repeating = true })
+hl.bind("SHIFT + ALT + TAB", hl.dsp.window.cycle_next({ next = false }), { repeating = true })
 hl.bind("CTRL + ALT + Tab", hl.dsp.group.next(), { repeating = true })
 hl.bind("CTRL + SHIFT + ALT + Tab", hl.dsp.group.prev(), { repeating = true })
-hl.bind(vars.kbToggleGroup, hl.dsp.group.toggle())
-hl.bind(vars.kbUngroup, hl.dsp.window.move({ out_of_group = true }))
+hl.bind("SUPER + Comma", hl.dsp.group.toggle())
+hl.bind("SUPER + U", hl.dsp.window.move({ out_of_group = true }))
 hl.bind("SUPER + SHIFT + Comma", hl.dsp.group.lock())
 
 -- Window actions
-hl.bind("SUPER + J", hl.dsp.layout("togglesplit"))    -- dwindle only
+hl.bind("SUPER + J", hl.dsp.layout("togglesplit")) -- dwindle only
 
 hl.bind("SUPER + left", hl.dsp.focus({ direction = "left" }))
 hl.bind("SUPER + right", hl.dsp.focus({ direction = "right" }))
@@ -86,23 +81,28 @@ hl.bind("SUPER + SHIFT + left", hl.dsp.window.move({ direction = "left" }))
 hl.bind("SUPER + SHIFT + right", hl.dsp.window.move({ direction = "right" }))
 hl.bind("SUPER + SHIFT + up", hl.dsp.window.move({ direction = "up" }))
 hl.bind("SUPER + SHIFT + down", hl.dsp.window.move({ direction = "down" }))
-hl.bind("SUPER + Minus", hl.dsp.window.resize(fn.resize_active_window(-10, 0)), { repeating = true })
-hl.bind("SUPER + Equal", hl.dsp.window.resize(fn.resize_active_window(10, 0)), { repeating = true })
-hl.bind("SUPER + SHIFT + Minus", hl.dsp.window.resize(fn.resize_active_window(0, -10)), { repeating = true })
-hl.bind("SUPER + SHIFT + Equal", hl.dsp.window.resize(fn.resize_active_window(0, 10)), { repeating = true })
-hl.bind("SUPER + ALT + left", hl.dsp.window.resize(fn.resize_active_window(-10, 0)), { repeating = true })
-hl.bind("SUPER + ALT + right", hl.dsp.window.resize(fn.resize_active_window(10, 0)), { repeating = true })
-hl.bind("SUPER + ALT + up", hl.dsp.window.resize(fn.resize_active_window(0, -10)), { repeating = true })
-hl.bind("SUPER + ALT + down", hl.dsp.window.resize(fn.resize_active_window(0, 10)), { repeating = true })
 
+-- Resize by 10% of the window's current size (see functions.lua: runs at key press)
+hl.bind("SUPER + Minus", fn.resize_by_percent(-10, 0), { repeating = true })
+hl.bind("SUPER + Equal", fn.resize_by_percent(10, 0), { repeating = true })
+hl.bind("SUPER + SHIFT + Minus", fn.resize_by_percent(0, -10), { repeating = true })
+hl.bind("SUPER + SHIFT + Equal", fn.resize_by_percent(0, 10), { repeating = true })
+hl.bind("SUPER + ALT + left", fn.resize_by_percent(-10, 0), { repeating = true })
+hl.bind("SUPER + ALT + right", fn.resize_by_percent(10, 0), { repeating = true })
+hl.bind("SUPER + ALT + up", fn.resize_by_percent(0, -10), { repeating = true })
+hl.bind("SUPER + ALT + down", fn.resize_by_percent(0, 10), { repeating = true })
+
+-- Mouse: drag to move, drag to resize
 hl.bind("SUPER + SHIFT + mouse:272", hl.dsp.window.drag(), { mouse = true })
-hl.bind(vars.kbMoveWindow, hl.dsp.window.drag(), { mouse = true })
+hl.bind("SUPER + Z", hl.dsp.window.drag(), { mouse = true })
 hl.bind("SUPER + mouse:272", hl.dsp.window.resize(), { mouse = true })
-hl.bind(vars.kbResizeWindow, hl.dsp.window.resize(), { mouse = true })
+hl.bind("SUPER + X", hl.dsp.window.resize(), { mouse = true })
+
 hl.bind("CTRL + SUPER + Backslash", hl.dsp.window.center())
-hl.bind("CTRL + SUPER + ALT + Backslash", hl.dsp.window.resize(fn.resize_by_screen(55, 70)))
-hl.bind("CTRL + SUPER + ALT + Backslash", hl.dsp.window.center())
-hl.bind(vars.kbWindowPip, function()
+hl.bind("CTRL + SUPER + ALT + Backslash", fn.size_and_center(55, 70))
+
+-- Picture-in-picture: float, shrink, pin to the bottom-right corner
+hl.bind("SUPER + ALT + backslash", function()
     local a = hl.get_active_window()
     if a then
         local pip = fn.move_actions(a) or {}
@@ -114,25 +114,21 @@ hl.bind(vars.kbWindowPip, function()
         end
     end
 end)
-hl.bind(vars.kbPinWindow, hl.dsp.window.pin())
-hl.bind(vars.kbWindowFullscreen, hl.dsp.window.fullscreen({ mode = "fullscreen" }))
-hl.bind(vars.kbWindowBorderedFullscreen, hl.dsp.window.fullscreen({ mode = "maximized" }))
-hl.bind(vars.kbToggleWindowFloating, hl.dsp.window.float())
-hl.bind(vars.kbCloseWindow, hl.dsp.window.close())
+hl.bind("SUPER + SHIFT + P", hl.dsp.window.pin())
+hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
+hl.bind("SUPER + ALT + F", hl.dsp.window.fullscreen({ mode = "maximized" }))
+hl.bind("SUPER + ALT + space", hl.dsp.window.float())
+hl.bind("SUPER + C", hl.dsp.window.close())
 
--- Special workspace toggles
-hl.bind(vars.kbSpecialWs, fn.toggle_special("special"))
-hl.bind(vars.kbSystemMonitorWs, fn.toggle_special("sysmon"))
-hl.bind(vars.kbMusicWs, fn.toggle_special("music"))
-hl.bind(vars.kbCommunicationWs, fn.toggle_special("communication"))
-hl.bind(vars.kbTodoWs, fn.toggle_special("todo"))
+-- Special workspaces (launch the app into it if the workspace is empty)
+hl.bind("SUPER + M", fn.toggle_special("music", "g4music"))
+hl.bind("SUPER + D", fn.toggle_special("communication", "Telegram"))
 
 -- Apps
-hl.bind(vars.kbTerminal, hl.dsp.exec_cmd(vars.terminal))
-hl.bind(vars.kbBrowser, hl.dsp.exec_cmd(vars.browser))
-hl.bind(vars.kbEditor, function() if vars.apps.editor then hl.exec_cmd(vars.apps.editor) end end)
-hl.bind(vars.kbFileExplorer, hl.dsp.exec_cmd(vars.fileExplorer))
-hl.bind("CTRL + ALT + V", hl.dsp.exec_cmd(vars.audioSettings))
+hl.bind("SUPER + Q", hl.dsp.exec_cmd("kitty"))
+hl.bind("SUPER + W", hl.dsp.exec_cmd("firefox"))
+hl.bind("SUPER + E", hl.dsp.exec_cmd("nautilus"))
+hl.bind("CTRL + ALT + V", hl.dsp.exec_cmd("pavucontrol"))
 
 -- Utilities
 hl.bind("Print", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
@@ -142,32 +138,26 @@ hl.bind("CTRL + ALT + R", fn.record(false, false))
 hl.bind("SUPER + SHIFT + ALT + R", fn.record(true, false))
 hl.bind("SUPER + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a"))
 hl.bind("SUPER + SHIFT + U", hl.dsp.exec_cmd("hyprctl kill"))
--- Volume
+
+-- Volume (5% steps, max 100%)
 hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { locked = true })
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 hl.bind("SUPER + SHIFT + M", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 hl.bind(
     "XF86AudioRaiseVolume",
-    hl.dsp.exec_cmd(
-        "wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; wpctl set-volume -l " ..
-        (vars.volumeMax / 100) .. " @DEFAULT_AUDIO_SINK@ " .. vars.volumeStep .. "%+"
-    ),
+    hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"),
     { locked = true, repeating = true }
 )
 hl.bind(
     "XF86AudioLowerVolume",
-    hl.dsp.exec_cmd(
-        "wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; wpctl set-volume @DEFAULT_AUDIO_SINK@ " .. vars.volumeStep .. "%-"
-    ),
+    hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),
     { locked = true, repeating = true }
 )
 
--- Sleep
-hl.bind("SUPER + SHIFT + L", hl.dsp.exec_cmd(vars.sleepGestureCmd), { locked = true })
+-- Sleep (no hibernation set up: falls back to plain suspend)
+hl.bind("SUPER + SHIFT + L", hl.dsp.exec_cmd("systemctl suspend-then-hibernate || systemctl suspend"), { locked = true })
 
--- Clipboard
-hl.bind("SUPER + V", hl.dsp.exec_cmd("dms ipc call clipboard toggle"))
--- [viii-removed] hl.bind("SUPER + Period", hl.dsp.global("shell:charms"))
+-- Clipboard: type the latest clipboard-history entry
 hl.bind(
     "CTRL + SHIFT + ALT + V",
     hl.dsp.exec_cmd('sleep 0.5s && ydotool type -d 1 "$(cliphist list | head -1 | cliphist decode)"'),

@@ -1,9 +1,8 @@
--- viii-shell-3: look and feel. File: ~/viii-shell-3/hypr/hyprland/look.lua (loaded by hyprland.lua).
--- Borders, rounding, gaps, shadow, blur and the window/layer/workspace animations, taken from the demo config.
--- Every block goes through try(): if this Hyprland build rejects one, only that block is skipped and
--- logged to ~/.cache/viii/hypr-lua.log (see:  viii doctor).
+-- ~/.config/hypr/hyprland/look.lua  (loaded last by hyprland.lua)
+-- Shadow, blur and animations. Gaps, rounding, borders and colours come from dms/*.lua.
+-- Every block goes through try(): if this Hyprland build rejects one, only that block is skipped
+-- and the error is logged to /tmp/hypr-lua.log.
 
-local home = os.getenv("HOME") or ""
 local log_path = "/tmp/hypr-lua.log"
 
 local function try(label, fn, ...)
@@ -15,38 +14,10 @@ local function try(label, fn, ...)
 end
 
 ---------------------------------------------------------------------------
--- Border colours. Defaults are the demo's gradient. When viii-theme starts writing
--- ~/.cache/viii/hypr-colors.lua (returns { active = {colors, angle}, inactive = "rgba(...)" })
--- it overrides these automatically. A missing file is fine.
+-- Shadow + blur (the GPU is weak, so keep blur light)
 ---------------------------------------------------------------------------
-local active   = { colors = { "rgba(33ccffee)", "rgba(00ff99ee)" }, angle = 45 }
-local inactive = "rgba(595959aa)"
-local okc, c = false, nil
-if okc and type(c) == "table" then
-    active   = c.active   or active
-    inactive = c.inactive or inactive
-end
-
----------------------------------------------------------------------------
--- Look: gaps, 2px border, rounded corners, soft shadow, light blur (the GPU is weak: 1 pass).
----------------------------------------------------------------------------
-try("general", hl.config, {
-    general = {
-        gaps_in     = 5,
-        gaps_out    = 20,
-        border_size = 2,
-        col = { active_border = active, inactive_border = inactive },
-        resize_on_border = false,
-        allow_tearing    = false,
-    },
-})
-
 try("decoration", hl.config, {
     decoration = {
-        rounding         = 15,
-        rounding_power   = 2,
-        active_opacity   = 1,
-        inactive_opacity = 1,
         shadow = {
             enabled      = true,
             range        = 4,
@@ -63,7 +34,7 @@ try("decoration", hl.config, {
 })
 
 ---------------------------------------------------------------------------
--- Animations: the demo's set (springs for windows, fades, layers, vertical workspaces).
+-- Animations: springs for windows, fades, layers, vertical workspaces
 ---------------------------------------------------------------------------
 try("animations on", hl.config, { animations = { enabled = true } })
 
