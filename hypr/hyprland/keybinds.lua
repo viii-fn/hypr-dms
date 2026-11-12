@@ -157,12 +157,6 @@ hl.bind(
 -- Sleep (no hibernation set up: falls back to plain suspend)
 hl.bind("SUPER + SHIFT + L", hl.dsp.exec_cmd("systemctl suspend-then-hibernate || systemctl suspend"), { locked = true })
 
--- Clipboard: type the latest clipboard-history entry
-hl.bind(
-    "CTRL + SHIFT + ALT + V",
-    hl.dsp.exec_cmd('sleep 0.5s && ydotool type -d 1 "$(cliphist list | head -1 | cliphist decode)"'),
-    { locked = true }
-)
 
 -- Testing
 hl.bind(

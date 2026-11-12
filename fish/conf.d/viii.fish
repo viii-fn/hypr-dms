@@ -7,15 +7,10 @@ fish_add_path -g -a $HOME/.dotnet $HOME/.dotnet/tools
 
 status is-interactive; or return
 
-alias rebar='killall waybar; setsid waybar >/dev/null 2>&1 & disown'
-alias rebind='micro ~/.config/hypr/hyprland.lua'
+alias rebind='nvim ~/.config/hypr/hyprland.lua'
 alias clean='~/.local/bin/clean.sh'
 alias clean-cache='~/.local/bin/clean-caches'
 alias deepclean='~/.local/bin/deepclean'
-
-# dotfiles bare repo: use `dot` instead of `git` for dotfiles
-alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
-alias dotlg='lazygit --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
 # yazi wrapper: after you quit yazi, the shell cd's into the folder you ended in
 function y

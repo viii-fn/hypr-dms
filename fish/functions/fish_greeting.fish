@@ -1,3 +1,3 @@
 function fish_greeting
-    fastfetch
+    bash ~/.config/greeting/greeting.sh
 end

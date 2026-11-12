@@ -1,0 +1,235 @@
+// niri config — keybinds ported from ~/.config/hypr/hyprland/keybinds.lua
+// KDL reference: https://niri-wm.github.io/niri/Configuration:-Introduction
+
+// Autostart: DMS shell
+spawn-at-startup "dms" "run"
+
+binds {
+    // ---------------------------------------------------------------
+    // Shell (DMS)
+    // ---------------------------------------------------------------
+    Mod+Return { spawn-sh "dms ipc call spotlight toggle"; }
+    Mod+I      { spawn-sh "dms ipc call settings toggle"; }
+    Mod+N      { spawn-sh "dms ipc call notifications toggle"; }
+    Ctrl+Alt+Delete { spawn-sh "dms ipc call powermenu toggle"; }
+    Mod+Escape      { spawn-sh "dms ipc call powermenu toggle"; }
+    Mod+L      { spawn "hyprlock"; }
+    // Session still locked, restore the lock screen
+    Mod+Alt+L allow-when-locked=true { spawn "hyprlock"; }
+
+    // Brightness: DMS shell sets the OSD, brightnessctl catches up
+    XF86MonBrightnessUp   allow-when-locked=true { spawn-sh "dms ipc call brightness increment 5 ''"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn-sh "dms ipc call brightness decrement 5 ''"; }
+
+    // ---------------------------------------------------------------
+    // Media
+    // ---------------------------------------------------------------
+    Ctrl+Mod+Space allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioPlay  allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioPause allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    Ctrl+Mod+Equal allow-when-locked=true { spawn "playerctl" "next"; }
+    XF86AudioNext  allow-when-locked=true { spawn "playerctl" "next"; }
+    Ctrl+Mod+Minus allow-when-locked=true { spawn "playerctl" "previous"; }
+    XF86AudioPrev  allow-when-locked=true { spawn "playerctl" "previous"; }
+    XF86AudioStop  allow-when-locked=true { spawn "playerctl" "stop"; }
+
+    // ---------------------------------------------------------------
+    // Shell kill/restart
+    // ---------------------------------------------------------------
+    Ctrl+Mod+Shift+R { spawn "dms" "kill"; }
+    Ctrl+Mod+Alt+R   { spawn "dms" "restart"; }
+
+    // ---------------------------------------------------------------
+    // Workspaces
+    // Niri has dynamic workspaces, so workspace indices are "best effort".
+    // ---------------------------------------------------------------
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+    Mod+9 { focus-workspace 9; }
+    Mod+0 { focus-workspace 10; }
+
+    Mod+Alt+1 { move-column-to-workspace 1; }
+    Mod+Alt+2 { move-column-to-workspace 2; }
+    Mod+Alt+3 { move-column-to-workspace 3; }
+    Mod+Alt+4 { move-column-to-workspace 4; }
+    Mod+Alt+5 { move-column-to-workspace 5; }
+    Mod+Alt+6 { move-column-to-workspace 6; }
+    Mod+Alt+7 { move-column-to-workspace 7; }
+    Mod+Alt+8 { move-column-to-workspace 8; }
+    Mod+Alt+9 { move-column-to-workspace 9; }
+    Mod+Alt+0 { move-column-to-workspace 10; }
+
+    // Hyprland "workspace groups" have no niri equivalent; mapped to 11-20
+    Ctrl+Mod+1 { focus-workspace 11; }
+    Ctrl+Mod+2 { focus-workspace 12; }
+    Ctrl+Mod+3 { focus-workspace 13; }
+    Ctrl+Mod+4 { focus-workspace 14; }
+    Ctrl+Mod+5 { focus-workspace 15; }
+    Ctrl+Mod+6 { focus-workspace 16; }
+    Ctrl+Mod+7 { focus-workspace 17; }
+    Ctrl+Mod+8 { focus-workspace 18; }
+    Ctrl+Mod+9 { focus-workspace 19; }
+    Ctrl+Mod+0 { focus-workspace 20; }
+
+    Ctrl+Mod+Alt+1 { move-column-to-workspace 11; }
+    Ctrl+Mod+Alt+2 { move-column-to-workspace 12; }
+    Ctrl+Mod+Alt+3 { move-column-to-workspace 13; }
+    Ctrl+Mod+Alt+4 { move-column-to-workspace 14; }
+    Ctrl+Mod+Alt+5 { move-column-to-workspace 15; }
+    Ctrl+Mod+Alt+6 { move-column-to-workspace 16; }
+    Ctrl+Mod+Alt+7 { move-column-to-workspace 17; }
+    Ctrl+Mod+Alt+8 { move-column-to-workspace 18; }
+    Ctrl+Mod+Alt+9 { move-column-to-workspace 19; }
+    Ctrl+Mod+Alt+0 { move-column-to-workspace 20; }
+
+    // Prev/next workspace (Hyprland: mouse_down = workspace -1, mouse_up = +1)
+    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-up; }
+    Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-down; }
+    Ctrl+Mod+Left  { focus-workspace-up; }
+    Ctrl+Mod+Right { focus-workspace-down; }
+    Mod+Page_Up    { focus-workspace-up; }
+    Mod+Page_Down  { focus-workspace-down; }
+
+    // Move window to prev/next workspace
+    Mod+Alt+Page_Up   { move-column-to-workspace-up; }
+    Mod+Alt+Page_Down { move-column-to-workspace-down; }
+    Mod+Alt+WheelScrollDown { move-column-to-workspace-up; }
+    Mod+Alt+WheelScrollUp   { move-column-to-workspace-down; }
+    Ctrl+Mod+Shift+Right { move-column-to-workspace-down; }
+    Ctrl+Mod+Shift+Left  { move-column-to-workspace-up; }
+
+    // Hyprland special-workspace bindings (Ctrl+Mod+Shift+Up/Down, Mod+Alt+S)
+    // have no niri equivalent and are intentionally not bound.
+
+    // ---------------------------------------------------------------
+    // Window groups / columns
+    // Hyprland group cycling -> niri window cycling; toggle group -> tabbed column
+    // ---------------------------------------------------------------
+    Alt+Tab         { focus-window-down; }
+    Shift+Alt+Tab   { focus-window-up; }
+    Ctrl+Alt+Tab       { focus-window-down; }
+    Ctrl+Shift+Alt+Tab { focus-window-up; }
+    Mod+Comma { toggle-column-tabbed-display; }
+    Mod+U     { expel-window-from-column; }
+    // Mod+Shift+Comma (group lock) has no niri equivalent.
+
+    // ---------------------------------------------------------------
+    // Window actions
+    // ---------------------------------------------------------------
+    // Mod+J (dwindle togglesplit) has no niri equivalent.
+
+    Mod+Left  { focus-column-left; }
+    Mod+Right { focus-column-right; }
+    Mod+Up    { focus-window-up; }
+    Mod+Down  { focus-window-down; }
+
+    Mod+Shift+Left  { move-column-left; }
+    Mod+Shift+Right { move-column-right; }
+    Mod+Shift+Up    { move-window-up; }
+    Mod+Shift+Down  { move-window-down; }
+
+    Mod+Minus       { set-column-width "-10%"; }
+    Mod+Equal       { set-column-width "+10%"; }
+    Mod+Shift+Minus { set-window-height "-10%"; }
+    Mod+Shift+Equal { set-window-height "+10%"; }
+    Mod+Alt+Left    { set-column-width "-10%"; }
+    Mod+Alt+Right   { set-column-width "+10%"; }
+    Mod+Alt+Up      { set-window-height "-10%"; }
+    Mod+Alt+Down    { set-window-height "+10%"; }
+
+    // Mouse drag/resize binds (Mod+Shift+Mouse, Mod+Z, Mod+Mouse, Mod+X)
+    // are not available: niri has no mouse-drag bindings.
+
+    Ctrl+Mod+Backslash { center-column; }
+    Ctrl+Mod+Alt+Backslash { spawn-sh "niri msg action set-column-width '55%' && niri msg action center-column"; }
+    Mod+Alt+Backslash { toggle-window-floating; } // PIP: floating, position not pinned
+
+    Mod+F { fullscreen-window; }
+    Mod+Alt+F { maximize-column; }
+    Mod+Alt+Space { toggle-window-floating; }
+    Mod+C { close-window; }
+
+    // ---------------------------------------------------------------
+    // Special workspaces -> no niri equivalent; apps are spawned directly
+    // ---------------------------------------------------------------
+    Ctrl+Shift+Escape { spawn "kitty" "--class" "btop" "-T" "btop" "btop"; }
+    Mod+M { spawn "g4music"; }
+    Mod+D { spawn "Telegram"; }
+    // Mod+S (special), Mod+R (todo) have no app configured and no niri equivalent.
+
+    // ---------------------------------------------------------------
+    // Apps
+    // ---------------------------------------------------------------
+    Mod+Q { spawn "kitty"; }
+    Mod+W { spawn "firefox"; }
+    // Mod+Shift+K (editor) is unset in variables.lua
+    Mod+E { spawn "nautilus"; }
+    Ctrl+Alt+V { spawn "pavucontrol"; }
+
+    // ---------------------------------------------------------------
+    // Utilities
+    // ---------------------------------------------------------------
+    Print       { spawn-sh "grim -g \"$(slurp)\" - | wl-copy"; }
+    Mod+Shift+S { spawn-sh "grim -g \"$(slurp)\" - | wl-copy"; }
+
+    Mod+Alt+R { spawn-sh "pkill -INT -f '^gpu-screen-recorder' || gpu-screen-recorder -w screen -a default_output -o \"$(xdg-user-dir VIDEOS)/rec-$(date +%F_%H-%M-%S).mp4\""; }
+    Ctrl+Alt+R { spawn-sh "pkill -INT -f '^gpu-screen-recorder' || gpu-screen-recorder -w screen -o \"$(xdg-user-dir VIDEOS)/rec-$(date +%F_%H-%M-%S).mp4\""; }
+    Mod+Shift+Alt+R { spawn-sh "pkill -INT -f '^gpu-screen-recorder' || gpu-screen-recorder -w region -region \"$(slurp -f %wx%h+%x+%y)\" -o \"$(xdg-user-dir VIDEOS)/rec-$(date +%F_%H-%M-%S).mp4\""; }
+
+    Mod+Shift+C { spawn "hyprpicker" "-a"; }
+    Mod+Shift+U { spawn-sh "niri msg action close-window"; } // closest to hyprctl kill
+
+    // Volume
+    XF86AudioMicMute allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    XF86AudioMute    allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    Mod+Shift+M      allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    XF86AudioRaiseVolume allow-when-locked=true {
+        spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+";
+    }
+    XF86AudioLowerVolume allow-when-locked=true {
+        spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
+    }
+
+    // Sleep
+    Mod+Shift+L allow-when-locked=true { spawn-sh "systemctl suspend-then-hibernate || systemctl suspend"; }
+
+    // Clipboard
+    Mod+V { spawn-sh "dms ipc call clipboard toggle"; }
+    Ctrl+Shift+Alt+V allow-when-locked=true {
+        spawn-sh "sleep 0.5s && ydotool type -d 1 \"$(cliphist list | head -1 | cliphist decode)\"";
+    }
+
+    // Testing
+    Mod+Alt+F12 {
+        spawn-sh "notify-send -u low -i dialog-information-symbolic 'Test notification' \"Here's a really long message to test truncation and wrapping\\nYou can middle click or flick this notification to dismiss it!\" -a 'Shell' -A 'Test1=I got it!' -A 'Test2=Another action'";
+    }
+
+    // ---------------------------------------------------------------
+    // niri-only extras (no Hyprland counterpart)
+    // ---------------------------------------------------------------
+    Mod+O { toggle-overview; }
+    Mod+Shift+E { quit; }
+}
+
+prefer-no-csd
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+blur {
+    passes 2
+    offset 3.0
+    noise 0.06
+    saturation 1.5
+}
+
+// DMS Include Configs
+include "dms/input.kdl"
+include "dms/layout.kdl"
