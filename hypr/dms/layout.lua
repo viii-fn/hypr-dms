@@ -24,14 +24,17 @@ hl.config({
 			stiffness = 200,
 		},
 	},
+	group = {
+		groupbar = {
+			middle_click_close = false,
+		},
+	},
 })
+
+-- Hand-written or migrated hyprland.lua often lacks this; tweened island lifts misplace the drag pointer.
+hl.layer_rule({ match = { namespace = "^dms:dankisland$" }, no_anim = true })
 
 hl.layer_rule({
 	match = { namespace = "^dms:bar$" },
-	xray = true,
-})
-
-hl.layer_rule({
-	match = { namespace = "^dms:dankisland$" },
 	xray = true,
 })

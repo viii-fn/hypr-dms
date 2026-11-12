@@ -10,6 +10,7 @@ hl.config({
 			middle_button_emulation = true,
 		},
 		kb_layout = "gb",
+		repeat_delay = 200,
 		numlock_by_default = false,
 	},
 })

@@ -473,9 +473,9 @@
                 "terminal.ansi.blue": "#974348",
                 "terminal.ansi.bright_blue": "#a5454b",
                 "terminal.ansi.dim_blue": "#974348",
-                "terminal.ansi.magenta": "#ff9ea2",
+                "terminal.ansi.magenta": "#a5555a",
                 "terminal.ansi.bright_magenta": "#ba7579",
-                "terminal.ansi.dim_magenta": "#ff9ea2",
+                "terminal.ansi.dim_magenta": "#a5555a",
                 "terminal.ansi.cyan": "#904449",
                 "terminal.ansi.bright_cyan": "#bb898d",
                 "terminal.ansi.dim_cyan": "#904449",
@@ -547,9 +547,9 @@
                         "selection": "#816b003D"
                     },
                     {
-                        "cursor": "#ff9ea2",
-                        "background": "#ff9ea280",
-                        "selection": "#ff9ea23D"
+                        "cursor": "#a5555a",
+                        "background": "#a5555a80",
+                        "selection": "#a5555a3D"
                     },
                     {
                         "cursor": "#904449",
@@ -629,7 +629,7 @@
                         "font_weight": null
                     },
                     "keyword": {
-                        "color": "#ff9ea2",
+                        "color": "#a5555a",
                         "font_style": "italic",
                         "font_weight": null
                     },
@@ -1231,9 +1231,9 @@
                 "terminal.ansi.blue": "#974348",
                 "terminal.ansi.bright_blue": "#a5454b",
                 "terminal.ansi.dim_blue": "#974348",
-                "terminal.ansi.magenta": "#ff9ea2",
+                "terminal.ansi.magenta": "#a5555a",
                 "terminal.ansi.bright_magenta": "#ba7579",
-                "terminal.ansi.dim_magenta": "#ff9ea2",
+                "terminal.ansi.dim_magenta": "#a5555a",
                 "terminal.ansi.cyan": "#904449",
                 "terminal.ansi.bright_cyan": "#bb898d",
                 "terminal.ansi.dim_cyan": "#904449",
@@ -1305,9 +1305,9 @@
                         "selection": "#816b003D"
                     },
                     {
-                        "cursor": "#ff9ea2",
-                        "background": "#ff9ea280",
-                        "selection": "#ff9ea23D"
+                        "cursor": "#a5555a",
+                        "background": "#a5555a80",
+                        "selection": "#a5555a3D"
                     },
                     {
                         "cursor": "#904449",
@@ -1387,7 +1387,7 @@
                         "font_weight": null
                     },
                     "keyword": {
-                        "color": "#ff9ea2",
+                        "color": "#a5555a",
                         "font_style": "italic",
                         "font_weight": null
                     },
