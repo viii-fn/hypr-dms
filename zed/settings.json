@@ -1,0 +1,43 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "terminal": {
+    "dock": "bottom"
+  },
+  "project_panel": {
+    "git_status_indicator": false,
+    "scrollbar": {
+      "horizontal_scroll": true
+    },
+    "folder_indicator": "icon",
+    "dock": "right"
+  },
+  "cursor_shape": "bar",
+  "git_panel": {
+    "tree_view": true
+  },
+  "cursor_animation": {
+    "enabled": true
+  },
+  "cli_default_open_behavior": "existing_window",
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 2000
+    }
+  },
+  "soft_wrap": "editor_width",
+  "icon_theme": "Icons modern material (Dark)",
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "dark",
+    "light": "DankShell Light Transparent",
+    "dark": "DankShell Dark Transparent",
+  },
+}
