@@ -173,3 +173,9 @@ hl.bind(
         " -a 'Shell' -A 'Test1=I got it!' -A 'Test2=Another action'"
     )
 )
+
+-- Special workspace (Super+S toggles it, Super+Alt+S sends the window there)
+hl.bind("SUPER + S", fn.toggle_special("special"))
+hl.bind("SUPER + ALT + S", hl.dsp.window.move({ workspace = "special:special" }))
+hl.bind("CTRL + SUPER + SHIFT + up", hl.dsp.window.move({ workspace = "special:special" }))
+hl.bind("CTRL + SUPER + SHIFT + down", hl.dsp.window.move({ workspace = "e+0" }))
