@@ -16,7 +16,7 @@
       "horizontal_scroll": true
     },
     "folder_indicator": "icon",
-    "dock": "right"
+    "dock": "left"
   },
   "cursor_shape": "bar",
   "git_panel": {
@@ -37,7 +37,7 @@
   "buffer_font_size": 15,
   "theme": {
     "mode": "dark",
-    "light": "DankShell Light Transparent",
-    "dark": "DankShell Dark Transparent",
+    "light": "Light Glass",
+    "dark": "Dark Glass",
   },
 }

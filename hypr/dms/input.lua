@@ -15,4 +15,5 @@ hl.config({
 	},
 })
 
+hl.device({ name = "sony-computer-entertainment-wireless-controller-touchpad", accel_profile = "" })
 hl.device({ name = "synps/2-synaptics-touchpad", accel_profile = "" })
