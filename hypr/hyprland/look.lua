@@ -1,7 +1,12 @@
 -- ~/.config/hypr/hyprland/look.lua  (loaded last by hyprland.lua)
--- Shadow, blur and animations. Gaps, rounding, borders and colours come from dms/*.lua.
--- Every block goes through try(): if this Hyprland build rejects one, only that block is skipped
--- and the error is logged to /tmp/hypr-lua.log.
+-- hypr-dms-lean-v1
+-- Lean look: shadows + DMS rounding + DMS wobble, nothing else.
+--   * no blur (the biggest per-frame cost on a weak GPU; it also enlarges the damage region)
+--   * no popin / slide / layer animations: windows and workspaces only fade, DMS animates its own UI
+--   * one easing family (easeOutQuint + one spring) so nothing feels like a random cut
+-- Gaps, rounding, borders, colours and the wobble itself come from dms/*.lua.
+-- Every block goes through try(): if this Hyprland build rejects one option, only that block is
+-- skipped and the error is logged to /tmp/hypr-lua.log.
 
 local log_path = "/tmp/hypr-lua.log"
 
@@ -14,7 +19,7 @@ local function try(label, fn, ...)
 end
 
 ---------------------------------------------------------------------------
--- Shadow + blur (the GPU is weak, so keep blur light)
+-- Shadow on, blur off
 ---------------------------------------------------------------------------
 try("decoration", hl.config, {
     decoration = {
@@ -25,43 +30,73 @@ try("decoration", hl.config, {
             color        = 0xee1a1a1a,
         },
         blur = {
-            enabled  = true,
-            size     = 3,
-            passes   = 2,
-            vibrancy = 0,
+            enabled = false,
         },
     },
 })
 
 ---------------------------------------------------------------------------
--- Animations: springs for windows, fades, layers, vertical workspaces
+-- Redraw only what changed
+---------------------------------------------------------------------------
+-- damage_tracking 2 = per-region (only the changed rectangles are redrawn). It is the default;
+-- it is pinned here so nothing can quietly switch it to full-screen redraws.
+-- To SEE it working, temporarily set damage_blink = true: only redrawn areas flash.
+try("damage tracking", hl.config, {
+    debug = {
+        damage_tracking = 2,
+        -- damage_blink = true,
+    },
+})
+
+try("misc", hl.config, {
+    misc = {
+        vfr                          = true,   -- no rendering while nothing changes
+        animate_manual_resizes       = false,  -- drag-resize is not tweened (clients re-layout every frame)
+        animate_mouse_windowdragging = false,  -- dragging is the wobble's job, not a second animation
+    },
+})
+
+-- Experimental, try only if you still see drops under load (needs a recent Hyprland):
+-- try("render scheduling", hl.config, { render = { new_render_scheduling = true } })
+
+---------------------------------------------------------------------------
+-- Animations: fades and one gentle spring for tiling moves. Nothing else.
 ---------------------------------------------------------------------------
 try("animations on", hl.config, { animations = { enabled = true } })
 
-try("curve easeOutQuint",   hl.curve, "easeOutQuint",   { type = "bezier", points = { { 0.23, 1 },    { 0.32, 1 } } })
-try("curve easeInOutCubic", hl.curve, "easeInOutCubic", { type = "bezier", points = { { 0.65, 0.05 }, { 0.36, 1 } } })
-try("curve linear",         hl.curve, "linear",         { type = "bezier", points = { { 0, 0 },       { 1, 1 } } })
-try("curve almostLinear",   hl.curve, "almostLinear",   { type = "bezier", points = { { 0.5, 0.5 },   { 0.75, 1 } } })
-try("curve quick",          hl.curve, "quick",          { type = "bezier", points = { { 0.15, 0 },    { 0.1, 1 } } })
-try("curve easy",           hl.curve, "easy",           { type = "spring", mass = 1, stiffness = 238.1191, dampening = 24.21279333 })
+try("curve smooth", hl.curve, "smooth", { type = "bezier", points = { { 0.23, 1 }, { 0.32, 1 } } })
+try("curve easy",   hl.curve, "easy",   { type = "spring", mass = 1, stiffness = 238.1191, dampening = 24.21279333 })
 
 local anims = {
-    { leaf = "global",        enabled = true, speed = 10,   bezier = "default" },
-    { leaf = "border",        enabled = true, speed = 5.39, bezier = "easeOutQuint" },
-    { leaf = "windows",       enabled = true, speed = 4.79, spring = "easy" },
-    { leaf = "windowsIn",     enabled = true, speed = 4.1,  spring = "easy", style = "popin 87%" },
-    { leaf = "windowsOut",    enabled = true, speed = 1.49, bezier = "linear", style = "popin 87%" },
-    { leaf = "fadeIn",        enabled = true, speed = 1.73, bezier = "almostLinear" },
-    { leaf = "fadeOut",       enabled = true, speed = 1.46, bezier = "almostLinear" },
-    { leaf = "fade",          enabled = true, speed = 3.03, bezier = "quick" },
-    { leaf = "layers",        enabled = true, speed = 3.81, bezier = "easeOutQuint" },
-    { leaf = "layersIn",      enabled = true, speed = 4,    bezier = "easeOutQuint", style = "fade" },
-    { leaf = "layersOut",     enabled = true, speed = 1.5,  bezier = "linear", style = "fade" },
-    { leaf = "fadeLayersIn",  enabled = true, speed = 1.79, bezier = "almostLinear" },
-    { leaf = "fadeLayersOut", enabled = true, speed = 1.39, bezier = "almostLinear" },
-    { leaf = "workspaces",    enabled = true, speed = 4,    bezier = "easeOutQuint", style = "slidevert" },
-    { leaf = "workspacesIn",  enabled = true, speed = 4,    bezier = "easeOutQuint", style = "slidevert" },
-    { leaf = "workspacesOut", enabled = true, speed = 4,    bezier = "easeOutQuint", style = "slidevert" },
-    { leaf = "zoomFactor",    enabled = true, speed = 7,    bezier = "quick" },
+    { leaf = "global",          enabled = true,  speed = 10,  bezier = "default" },
+
+    -- windows: opened/closed windows fade (no popin scale), tiling moves use the spring
+    { leaf = "windows",         enabled = true,  speed = 4.79, spring = "easy" },
+    { leaf = "windowsIn",       enabled = false, speed = 1,   bezier = "smooth" },
+    { leaf = "windowsOut",      enabled = false, speed = 1,   bezier = "smooth" },
+    { leaf = "fade",            enabled = true,  speed = 3.5, bezier = "smooth" },
+    { leaf = "fadeIn",          enabled = true,  speed = 3.5, bezier = "smooth" },
+    { leaf = "fadeOut",         enabled = true,  speed = 2.8, bezier = "smooth" },
+    { leaf = "fadeShadow",      enabled = true,  speed = 3.5, bezier = "smooth" },
+    { leaf = "fadeDim",         enabled = true,  speed = 3.5, bezier = "smooth" },
+    { leaf = "border",          enabled = true,  speed = 4,   bezier = "smooth" },
+    { leaf = "borderangle",     enabled = false, speed = 1,   bezier = "smooth" },
+
+    -- layers (bar, popouts, launcher...): DMS animates these itself, so Hyprland stays out of it
+    { leaf = "layers",          enabled = false, speed = 1,   bezier = "smooth" },
+    { leaf = "layersIn",        enabled = false, speed = 1,   bezier = "smooth" },
+    { leaf = "layersOut",       enabled = false, speed = 1,   bezier = "smooth" },
+    { leaf = "fadeLayersIn",    enabled = false, speed = 1,   bezier = "smooth" },
+    { leaf = "fadeLayersOut",   enabled = false, speed = 1,   bezier = "smooth" },
+
+    -- workspaces: a plain crossfade instead of a slide (a slide re-renders two full workspaces)
+    { leaf = "workspaces",      enabled = true,  speed = 3.5, bezier = "smooth", style = "fade" },
+    { leaf = "workspacesIn",    enabled = true,  speed = 3.5, bezier = "smooth", style = "fade" },
+    { leaf = "workspacesOut",   enabled = true,  speed = 3.5, bezier = "smooth", style = "fade" },
+    { leaf = "specialWorkspace",    enabled = true, speed = 3.5, bezier = "smooth", style = "fade" },
+    { leaf = "specialWorkspaceIn",  enabled = true, speed = 3.5, bezier = "smooth", style = "fade" },
+    { leaf = "specialWorkspaceOut", enabled = true, speed = 3.5, bezier = "smooth", style = "fade" },
+
+    { leaf = "zoomFactor",      enabled = true,  speed = 6,   bezier = "smooth" },
 }
 for _, a in ipairs(anims) do try("anim " .. a.leaf, hl.animation, a) end
