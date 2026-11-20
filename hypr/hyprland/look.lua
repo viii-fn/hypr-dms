@@ -1,5 +1,5 @@
 -- ~/.config/hypr/hyprland/look.lua  (loaded last by hyprland.lua)
--- hypr-dms-lean-v1
+-- hypr-dms-lean-v2
 -- Lean look: shadows + DMS rounding + DMS wobble, nothing else.
 --   * no blur (the biggest per-frame cost on a weak GPU; it also enlarges the damage region)
 --   * no popin / slide / layer animations: windows and workspaces only fade, DMS animates its own UI
@@ -50,7 +50,6 @@ try("damage tracking", hl.config, {
 
 try("misc", hl.config, {
     misc = {
-        vfr                          = true,   -- no rendering while nothing changes
         animate_manual_resizes       = false,  -- drag-resize is not tweened (clients re-layout every frame)
         animate_mouse_windowdragging = false,  -- dragging is the wobble's job, not a second animation
     },
@@ -73,7 +72,9 @@ local anims = {
     -- windows: opened/closed windows fade (no popin scale), tiling moves use the spring
     { leaf = "windows",         enabled = true,  speed = 4.79, spring = "easy" },
     { leaf = "windowsIn",       enabled = false, speed = 1,   bezier = "smooth" },
-    { leaf = "windowsOut",      enabled = false, speed = 1,   bezier = "smooth" },
+    -- windowsOut MUST stay enabled: it is what runs the close animation, and without it the window
+    -- vanishes instantly and fadeOut never plays. 98% popin is invisible, so this is a pure fade.
+    { leaf = "windowsOut",      enabled = true,  speed = 2.8, bezier = "smooth", style = "popin 98%" },
     { leaf = "fade",            enabled = true,  speed = 3.5, bezier = "smooth" },
     { leaf = "fadeIn",          enabled = true,  speed = 3.5, bezier = "smooth" },
     { leaf = "fadeOut",         enabled = true,  speed = 2.8, bezier = "smooth" },
@@ -90,9 +91,9 @@ local anims = {
     { leaf = "fadeLayersOut",   enabled = false, speed = 1,   bezier = "smooth" },
 
     -- workspaces: a plain crossfade instead of a slide (a slide re-renders two full workspaces)
-    { leaf = "workspaces",      enabled = true,  speed = 3.5, bezier = "smooth", style = "fade" },
-    { leaf = "workspacesIn",    enabled = true,  speed = 3.5, bezier = "smooth", style = "fade" },
-    { leaf = "workspacesOut",   enabled = true,  speed = 3.5, bezier = "smooth", style = "fade" },
+    { leaf = "workspaces",      enabled = true,  speed = 3.5, bezier = "smooth", style = "slidevert" },
+    { leaf = "workspacesIn",    enabled = true,  speed = 3.5, bezier = "smooth", style = "slidevert" },
+    { leaf = "workspacesOut",   enabled = true,  speed = 3.5, bezier = "smooth", style = "slidevert" },
     { leaf = "specialWorkspace",    enabled = true, speed = 3.5, bezier = "smooth", style = "fade" },
     { leaf = "specialWorkspaceIn",  enabled = true, speed = 3.5, bezier = "smooth", style = "fade" },
     { leaf = "specialWorkspaceOut", enabled = true, speed = 3.5, bezier = "smooth", style = "fade" },
