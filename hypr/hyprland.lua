@@ -21,3 +21,10 @@ require("dms.cursor")
 -- pcall: a bad option here can never break the rest of the config.
 package.loaded["hyprland.look"] = nil
 pcall(require, "hyprland.look")
+
+hl.config({
+    misc = {
+        force_default_wallpaper = 2,    -- Set to 0 or 1 to disable the anime mascot wallpapers
+        disable_hyprland_logo   = true, -- If true disables the random hyprland logo / anime girl background. :(
+    },
+})

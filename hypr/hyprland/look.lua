@@ -94,9 +94,9 @@ local anims = {
     { leaf = "workspaces",      enabled = true,  speed = 3.5, bezier = "smooth", style = "slidevert" },
     { leaf = "workspacesIn",    enabled = true,  speed = 3.5, bezier = "smooth", style = "slidevert" },
     { leaf = "workspacesOut",   enabled = true,  speed = 3.5, bezier = "smooth", style = "slidevert" },
-    { leaf = "specialWorkspace",    enabled = true, speed = 3.5, bezier = "smooth", style = "fade" },
-    { leaf = "specialWorkspaceIn",  enabled = true, speed = 3.5, bezier = "smooth", style = "fade" },
-    { leaf = "specialWorkspaceOut", enabled = true, speed = 3.5, bezier = "smooth", style = "fade" },
+    { leaf = "specialWorkspace",    enabled = true, speed = 3.5, bezier = "smooth", style = "slidevert" },
+    { leaf = "specialWorkspaceIn",  enabled = true, speed = 3.5, bezier = "smooth", style = "slidevert" },
+    { leaf = "specialWorkspaceOut", enabled = true, speed = 3.5, bezier = "smooth", style = "slidevert" },
 
     { leaf = "zoomFactor",      enabled = true,  speed = 6,   bezier = "smooth" },
 }
