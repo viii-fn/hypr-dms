@@ -12,6 +12,7 @@ input {
     touchpad {
         tap
         accel-speed 0.0
+        accel-profile "adaptive"
         dwt
         middle-emulation
     }

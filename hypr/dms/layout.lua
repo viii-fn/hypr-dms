@@ -26,6 +26,7 @@ hl.config({
 	},
 	group = {
 		groupbar = {
+			blur = true,
 			middle_click_close = false,
 		},
 	},
