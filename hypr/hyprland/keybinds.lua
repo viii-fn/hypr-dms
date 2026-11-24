@@ -121,7 +121,7 @@ hl.bind("SUPER + ALT + space", hl.dsp.window.float())
 hl.bind("SUPER + C", hl.dsp.window.close())
 
 -- Special workspaces (launch the app into it if the workspace is empty)
-hl.bind("SUPER + M", fn.toggle_special("music", "g4music"))
+hl.bind("SUPER + M", fn.toggle_special("music", "spotify"))
 hl.bind("SUPER + D", fn.toggle_special("communication", "Telegram"))
 
 -- Apps
