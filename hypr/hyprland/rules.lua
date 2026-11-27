@@ -98,7 +98,7 @@ hl.window_rule({
 })
 
 -- Special workspaces (Super+M music, Super+D communication)
-hl.window_rule({ match = { class = ".*g4music.*" }, workspace = "special:music" })
+hl.window_rule({ match = { class = ".*spotify.*" }, workspace = "special:music" })
 hl.window_rule({ match = { class = "discord|equibop|vesktop|org\\.telegram\\.desktop|TelegramDesktop" }, workspace = "special:communication" })
 
 ---------------------
